@@ -51,7 +51,7 @@ export class DialogComponent implements OnInit, OnDestroy {
         if (formState.isValid) {
           console.log('Form submitted:', formState.value);
         } else {
-          console.log(formState.errors);
+          console.log(formState);
         }
       })
       .unsubscribe(); // 執行後馬上取消訂閱防止每次更新資料都在觸發

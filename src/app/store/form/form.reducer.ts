@@ -28,13 +28,11 @@ const initForm = createFormGroupState<Products>('ProductForm', {
   rating: { rate: '', count: 0 },
 });
 const priceLessThanCount = (
-  priceValue: number,
-  countValue: number,
+  state: FormGroupState<Products>,
 ): ValidationErrors => {
-  if (priceValue > countValue) {
-    return { priceTooHigh: true };
-  }
-  return {};
+  const price = state.controls.price.value;
+  const count = state.controls.rating.value.count;
+  return price > count ? { priceTooHigh: true } : {};
 };
 
 // 定義驗證規則
@@ -52,18 +50,30 @@ const validateForm = updateGroup<Products>({
 // 組合所有驗證器
 const validateFormWithCustom = (state: FormGroupState<Products>) => {
   const updatedState = validateForm(state);
-  const customErrors = priceLessThanCount(
-    updatedState.controls.price.value,
-    updatedState.controls.rating.value.count,
+  const customErrors = priceLessThanCount(updatedState); // 自定義規則
+  // 清除先前的自定義錯誤
+  type CustomErrors = {
+    [key: string]: boolean;
+  };
+  const arr = ['priceTooHigh'];
+  const originValid = Object.keys(updatedState.errors).reduce<CustomErrors>(
+    (acc, key) => {
+      // 除了客製化驗證的值
+      if (!arr.includes(key)) {
+        acc[key] = true;
+      }
+      return acc;
+    },
+    {},
   );
   return {
     ...updatedState,
-    errors: { ...updatedState.errors, ...customErrors },
+    errors: { ...originValid, ...customErrors },
   };
 };
 
 export const initFormState: ProductFromState = {
-  formState: initForm,
+  formState: validateFormWithCustom(initForm),
 };
 
 const { setProductInfo, setUserDefined } = DialogActions;
