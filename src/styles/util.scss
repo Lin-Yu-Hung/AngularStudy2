@@ -1,0 +1,6 @@
+input.ngrx-forms-invalid {
+  border: 1px solid red;
+  &:focus {
+    box-shadow: none;
+  }
+}

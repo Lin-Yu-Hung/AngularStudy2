@@ -1,0 +1,33 @@
+<ng-container *ngIf="carts$ | async as carts">
+  @if (carts.length > 0) {
+    <div class="table w-full">
+      <p-table [value]="carts">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>id</th>
+            <th>userId</th>
+            <th>date</th>
+            <th>products</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-cart>
+          <tr>
+            <td>{{ cart.id }}</td>
+            <td>{{ cart.userId }}</td>
+            <td>{{ cart.date }}</td>
+            <td>
+              <ul>
+                @for (item of cart.products; track item.productId) {
+                  <li>商品編號：{{ item.productId }}</li>
+                  <li>訂購數量：{{ item.quantity }}</li>
+                }
+              </ul>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  } @else {
+    <p>No cartItem found</p>
+  }
+</ng-container>

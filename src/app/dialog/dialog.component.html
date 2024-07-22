@@ -1,0 +1,85 @@
+<p-dialog
+  (onHide)="closeDialog()"
+  header="ProductDetail"
+  [modal]="true"
+  [(visible)]="visable"
+  [style]="{ width: '50rem' }"
+  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+>
+  <ng-container *ngIf="formState$ | async as formState">
+    <form [ngrxFormState]="formState" (submit)="onSubmit()">
+      <div class="card flex flex-col">
+        <div class="flex items-center">
+          <label for="username" class="min-w-28 me-3">Username</label>
+          <div class="flex flex-col w-full">
+            <input
+              class="w-full"
+              pInputText
+              id="username"
+              aria-describedby="username-help"
+              [ngrxFormControlState]="formState.controls.title"
+            />
+            @if (!formState.controls.title.isValid) {
+              <small class="text-red-700">not Valid</small>
+            }
+          </div>
+        </div>
+
+        <div class="flex items-center mt-3">
+          <label for="category" class="min-w-28 me-3">Category</label>
+          <p-dropdown
+            [options]="categorys"
+            placeholder="Select a City"
+            [ngrxFormControlState]="formState.controls.category"
+          />
+        </div>
+        <div class="flex items-center mt-3">
+          <label for="price" class="min-w-28 me-3">Price</label>
+          <p-inputNumber
+            class="w-full"
+            styleClass="w-1/5"
+            inputStyleClass="w-1/5"
+            inputId="price"
+            [ngrxFormControlState]="formState.controls.price"
+          />
+        </div>
+        <div class="flex mt-3">
+          <label for="description" class="min-w-28 me-3">description</label>
+          <textarea
+            rows="5"
+            cols="30"
+            pInputTextarea
+            [ngrxFormControlState]="formState.controls.description"
+          >
+          </textarea>
+        </div>
+        <div class="flex mt-3">
+          <div class="flex items-center">
+            <label for="rating" class="min-w-28 me-3">Rate</label>
+            <p-inputNumber
+              inputId="rating"
+              [ngrxFormControlState]="formState.controls.rating.controls.rate"
+            />
+          </div>
+          <div class="flex items-center">
+            <label for="count" class="min-w-28 me-3 text-center">Count</label>
+            <p-inputNumber
+              inputId="count"
+              [ngrxFormControlState]="formState.controls.rating.controls.count"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end mt-3">
+        <p-button
+          type="submit"
+          label="submit"
+          class="me-3"
+          severity="secondary"
+        />
+        <!-- (onClick)="closeDialog()" -->
+      </div>
+    </form>
+  </ng-container>
+</p-dialog>

@@ -1,0 +1,23 @@
+:host {
+  ::ng-deep {
+    .search-box {
+      display: flex;
+      flex-direction: column;
+
+      .p-breadcrumb {
+        padding-left: 0;
+        border: none !important;
+        .p-breadcrumb-home {
+          .p-menuitem-icon {
+            margin-right: 1rem;
+          }
+        }
+      }
+      .p-icon-field {
+        input {
+          width: 100%;
+        }
+      }
+    }
+  }
+}

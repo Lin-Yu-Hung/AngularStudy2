@@ -1,0 +1,12 @@
+<div class="search-box">
+  <p-breadcrumb [model]="items" [home]="home" class="mt-3 border-0" />
+  <p-iconField iconPosition="right">
+    <p-inputIcon styleClass="pi pi-search" />
+    <input type="text" pInputText [(ngModel)]="msg" />
+  </p-iconField>
+  <p-button
+    label="Submit"
+    class="mt-3 flex justify-end"
+    (onClick)="onSubmit()"
+  />
+</div>
