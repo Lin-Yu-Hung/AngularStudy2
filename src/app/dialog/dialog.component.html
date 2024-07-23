@@ -19,9 +19,6 @@
               aria-describedby="username-help"
               [ngrxFormControlState]="formState.controls.title"
             />
-            @if (!formState.controls.title.isValid) {
-              <small class="text-red-700">not Valid</small>
-            }
           </div>
         </div>
 
@@ -73,13 +70,23 @@
 
       <div class="flex justify-end mt-3">
         <p-button
+          [disabled]="formState.isInvalid"
           type="submit"
           label="submit"
           class="me-3"
           severity="secondary"
         />
-        <!-- (onClick)="closeDialog()" -->
       </div>
     </form>
+    <ul *ngIf="formState.isInvalid" class="error-messages" class="text-red-500">
+      <li *ngIf="formState.errors['_title']?.required">A title is required</li>
+      <li *ngIf="formState.errors['_title']?.textToohigh">
+        A title is textToohigh
+      </li>
+      <li *ngIf="formState.errors['_price']?.required">A price is required</li>
+      <li *ngIf="formState.errors['_price']?.priceTooHigh">
+        A price is TooHigh
+      </li>
+    </ul>
   </ng-container>
 </p-dialog>

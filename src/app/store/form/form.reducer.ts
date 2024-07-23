@@ -2,9 +2,10 @@ import { createReducer, on } from '@ngrx/store';
 import { Products } from '../../product/product.model';
 import {
   createFormGroupState,
+  FormControlState,
   formGroupReducer,
   FormGroupState,
-  SetUserDefinedPropertyAction,
+  setUserDefinedProperty,
   setValue,
   updateGroup,
   validate,
@@ -12,7 +13,8 @@ import {
 } from 'ngrx-forms';
 import { Action } from '@ngrx/store';
 import { DialogActions } from '../dialog/dialog.action';
-import { required, maxLength, greaterThan } from 'ngrx-forms/validation';
+import { required, greaterThan } from 'ngrx-forms/validation';
+
 // ng-form處理
 export interface ProductFromState {
   formState: FormGroupState<Products>;
@@ -34,11 +36,28 @@ const priceLessThanCount = (
   const count = state.controls.rating.value.count;
   return price > count ? { priceTooHigh: true } : {};
 };
+const validText = (num: number, text: string) => {
+  if (text.length > num) {
+    return { textToohigh: true };
+  }
+  return {};
+};
 
 // 定義驗證規則
 const validateForm = updateGroup<Products>({
-  title: validate(required),
-  price: validate(required, greaterThan(0)),
+  title: (inputeState) => {
+    let updatedState = validate(inputeState, (inputValue) => {
+      return { ...required(inputValue), ...validText(10, inputValue) }; // 將值丟進required、maxLength驗證
+    });
+    return updatedState;
+  },
+  price: (inputState, parentState) => {
+    let updatedState: FormControlState<number>;
+    updatedState = validate(inputState, (inputValue) => {
+      return { ...required(inputValue), ...priceLessThanCount(parentState) };
+    });
+    return updatedState;
+  },
   category: validate(required),
   description: validate(required),
   rating: updateGroup<Products['rating']>({
@@ -47,33 +66,8 @@ const validateForm = updateGroup<Products>({
   }),
 });
 
-// 組合所有驗證器
-const validateFormWithCustom = (state: FormGroupState<Products>) => {
-  const updatedState = validateForm(state);
-  const customErrors = priceLessThanCount(updatedState); // 自定義規則
-  // 清除先前的自定義錯誤
-  type CustomErrors = {
-    [key: string]: boolean;
-  };
-  const arr = ['priceTooHigh'];
-  const originValid = Object.keys(updatedState.errors).reduce<CustomErrors>(
-    (acc, key) => {
-      // 除了客製化驗證的值
-      if (!arr.includes(key)) {
-        acc[key] = true;
-      }
-      return acc;
-    },
-    {},
-  );
-  return {
-    ...updatedState,
-    errors: { ...originValid, ...customErrors },
-  };
-};
-
 export const initFormState: ProductFromState = {
-  formState: validateFormWithCustom(initForm),
+  formState: validateForm(initForm),
 };
 
 const { setProductInfo, setUserDefined } = DialogActions;
@@ -88,16 +82,22 @@ const ProductInfoReducer = createReducer(
     };
   }),
   on(setUserDefined, (state, { key, obj }) => {
-    // 設定userdefinedproperty
-    const action = new SetUserDefinedPropertyAction(
-      `ProductForm.${key}`,
-      obj.key,
-      obj.value,
-    );
-    return {
+    let updatedState: ProductFromState;
+    updatedState = {
       ...state,
-      formState: formGroupReducer(state.formState, action),
+      formState: updateGroup<Products>(state.formState, {
+        [key]: setUserDefinedProperty(obj.key, obj.value),
+        rating: updateGroup<Products['rating']>({
+          rate: setUserDefinedProperty(obj.key, obj.value),
+        }),
+      }),
     };
+    // updatedState.formState = setUserDefinedProperty(
+    //   updatedState.formState,
+    //   obj.key,
+    //   obj.value,
+    // );
+    return updatedState;
   }),
 );
 
@@ -107,7 +107,7 @@ export const ProductInfoFormReducer = (
   action: Action,
 ) => {
   const productInfoState = ProductInfoReducer(state, action);
-  const formState = validateFormWithCustom(
+  const formState = validateForm(
     formGroupReducer(productInfoState.formState, action),
   );
   return { formState };
