@@ -1,6 +1,14 @@
-input.ngrx-forms-invalid {
+@mixin invalid-input {
   border: 1px solid red;
   &:focus {
     box-shadow: none;
   }
+}
+
+input.ngrx-forms-invalid {
+  @include invalid-input;
+}
+
+p-inputnumber.ngrx-forms-invalid input {
+  @include invalid-input;
 }

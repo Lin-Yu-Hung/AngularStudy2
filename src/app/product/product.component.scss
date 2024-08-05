@@ -2,3 +2,11 @@
   height: 60vh;
   overflow: auto;
 }
+
+
+.table-row {
+  @apply
+  text-xs
+  text-stone-500
+  
+}
