@@ -70,7 +70,6 @@ export class ProductComponent implements OnInit, OnDestroy {
       console.log(data);
     });
     this.store.dispatch(this.action);
-    // this.store.dispatch(this.setValueAction);
     const { loadCategorys, loadProducts } = productActions;
     this.visable$ = this.store.select(selectDialogVistable);
     this.store.dispatch(loadProducts({ url: 'products' })); // 呼叫api
