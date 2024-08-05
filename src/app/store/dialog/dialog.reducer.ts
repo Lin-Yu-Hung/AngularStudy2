@@ -1,24 +1,26 @@
 import { createReducer, on } from '@ngrx/store';
-import { Products } from '../../product/product.model';
 import { DialogActions } from './dialog.action';
-
-export interface Dialog {
-  visable: boolean;
-  productInfo: Products | {};
-}
+import { Dialog } from './dialog.model';
 
 const initState: Dialog = {
   visable: false,
   productInfo: {},
+  specificCategory: [],
 };
 
-const { setVisable } = DialogActions;
+const { setVisable, saveSpecificCategory } = DialogActions;
 export const DialogReducer = createReducer(
   initState,
   on(setVisable, (state, action) => {
     return {
       ...state,
       visable: action.status,
+    };
+  }),
+  on(saveSpecificCategory, (state, action) => {
+    return {
+      ...state,
+      specificCategory: action.data,
     };
   }),
 );

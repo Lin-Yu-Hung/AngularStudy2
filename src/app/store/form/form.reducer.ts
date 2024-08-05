@@ -5,9 +5,11 @@ import {
   FormControlState,
   formGroupReducer,
   FormGroupState,
+  setErrors,
   setUserDefinedProperty,
   setValue,
   updateGroup,
+  updateRecursive,
   validate,
   ValidationErrors,
 } from 'ngrx-forms';
@@ -58,11 +60,11 @@ const validateForm = updateGroup<Products>({
     });
     return updatedState;
   },
-  category: validate(required),
+  category: (state) => ({ ...state, ...validate(required) }),
   description: validate(required),
   rating: updateGroup<Products['rating']>({
     rate: validate(required),
-    count: validate(required, greaterThan(0)),
+    count: validate(required),
   }),
 });
 
@@ -82,22 +84,31 @@ const ProductInfoReducer = createReducer(
     };
   }),
   on(setUserDefined, (state, { key, obj }) => {
-    let updatedState: ProductFromState;
-    updatedState = {
+    let updateState: ProductFromState;
+
+    updateState = {
       ...state,
       formState: updateGroup<Products>(state.formState, {
-        [key]: setUserDefinedProperty(obj.key, obj.value),
-        rating: updateGroup<Products['rating']>({
-          rate: setUserDefinedProperty(obj.key, obj.value),
-        }),
+        category: (c) => {
+          return setErrors(c, { duplicated: true });
+          // return setValue('newvalue')(c);
+        },
       }),
     };
-    // updatedState.formState = setUserDefinedProperty(
-    //   updatedState.formState,
-    //   obj.key,
-    //   obj.value,
-    // );
-    return updatedState;
+    console.log('🚀 ~ on ~ updateState:', updateState);
+
+    return updateState;
+    // updateState = {
+    //   ...state,
+    //   formState: updateRecursive((control) => {
+    //     if (control.id === 'ProductForm.id') {
+    //       return setUserDefinedProperty(control, 'disabled', false);
+    //     }
+    //     return control;
+    //   })(state.formState),
+    // };
+
+    // return updateState;
   }),
 );
 
@@ -110,5 +121,7 @@ export const ProductInfoFormReducer = (
   const formState = validateForm(
     formGroupReducer(productInfoState.formState, action),
   );
+  console.log(formState);
+
   return { formState };
 };

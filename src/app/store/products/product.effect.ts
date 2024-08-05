@@ -4,6 +4,7 @@ import { ApiService } from '../../api.service';
 import { productActions } from './product.action';
 import { catchError, map, mergeMap, of } from 'rxjs';
 import { Products } from '../../product/product.model';
+import { HttpErrorResponse } from '@angular/common/http';
 
 const {
   loadProducts,
@@ -25,7 +26,10 @@ export class ProductEffects {
         if (action.type === '[Product] loadProducts') {
           return this.http$.get<Products[]>(action.url).pipe(
             map((response) => saveProducts({ products: response.body || [] })),
-            catchError(() => of(loadProductsFailure())),
+            catchError((err) => {
+              console.dir(err.message);
+              return of(loadProductsFailure());
+            }),
           );
         } else {
           // category
@@ -33,7 +37,10 @@ export class ProductEffects {
             map((response) =>
               saveCategorys({ categorys: response.body || [] }),
             ),
-            catchError(() => of(saveCategorys({ categorys: [] }))),
+            catchError((err: HttpErrorResponse) => {
+              // console.log(err);
+              return of(saveCategorys({ categorys: [] }));
+            }),
           );
         }
       }),

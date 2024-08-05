@@ -11,6 +11,7 @@ import { provideAnimations } from '@angular/platform-browser/animations'; // 添
 import { reducers } from './app/store/reducers';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { isDevMode } from '@angular/core';
+import { DialogEffect } from './app/store/dialog/dialog.effect';
 
 export class AppModule {}
 bootstrapApplication(AppComponent, {
@@ -18,8 +19,8 @@ bootstrapApplication(AppComponent, {
     provideRouter(routes),
     provideHttpClient(),
     provideStore(reducers),
-    provideEffects(ProductEffects, CartEffects),
+    provideEffects(ProductEffects, CartEffects, DialogEffect),
     provideAnimations(),
-    provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() })
-],
+    provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
+  ],
 }).catch((err) => console.error(err));

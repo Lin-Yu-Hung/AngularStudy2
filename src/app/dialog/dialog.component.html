@@ -25,6 +25,7 @@
         <div class="flex items-center mt-3">
           <label for="category" class="min-w-28 me-3">Category</label>
           <p-dropdown
+            (onChange)="changeCategory($event)"
             [options]="categorys"
             placeholder="Select a City"
             [ngrxFormControlState]="formState.controls.category"
@@ -33,13 +34,13 @@
         <div class="flex items-center mt-3">
           <label for="price" class="min-w-28 me-3">Price</label>
           <p-inputNumber
-            class="w-full"
-            styleClass="w-1/5"
-            inputStyleClass="w-1/5"
+            class="w-1/5"
+            inputStyleClass="w-full"
             inputId="price"
             [ngrxFormControlState]="formState.controls.price"
           />
         </div>
+
         <div class="flex mt-3">
           <label for="description" class="min-w-28 me-3">description</label>
           <textarea
@@ -51,16 +52,22 @@
           </textarea>
         </div>
         <div class="flex mt-3">
-          <div class="flex items-center">
-            <label for="rating" class="min-w-28 me-3">Rate</label>
+          <div class="flex basis-1/2 items-center">
+            <label for="rating" class="me-3 min-w-28">Rate</label>
             <p-inputNumber
               inputId="rating"
               [ngrxFormControlState]="formState.controls.rating.controls.rate"
             />
           </div>
           <div class="flex items-center">
-            <label for="count" class="min-w-28 me-3 text-center">Count</label>
+            <label for="count" class="mx-3 text-center">Count</label>
             <p-inputNumber
+              [inputStyleClass]="
+                formState.controls.price.value >
+                formState.controls.rating.controls.count.value
+                  ? 'ngrx-forms-invalid'
+                  : ''
+              "
               inputId="count"
               [ngrxFormControlState]="formState.controls.rating.controls.count"
             />
@@ -88,5 +95,24 @@
         A price is TooHigh
       </li>
     </ul>
+    <h2 class="mt-2 text-xl font-bold">相同類別商品</h2>
+    <ng-container *ngIf="specificCategory$ | async as product">
+      <p-table [value]="product" [tableStyleClass]="'mt-2'">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>title</th>
+            <th>price</th>
+            <th>Category</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product>
+          <tr>
+            <td>{{ product.title }}</td>
+            <td>{{ product.price }}</td>
+            <td>{{ product.category }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </ng-container>
   </ng-container>
 </p-dialog>
