@@ -1,9 +1,16 @@
-import { createAction, createReducer, on, props } from '@ngrx/store';
+import {
+  createAction,
+  createReducer,
+  createSelector,
+  on,
+  props,
+} from '@ngrx/store';
 import { Carts } from '../../cart/cart.model';
 import { inject, Injectable } from '@angular/core';
 import { ApiService } from '../../api.service';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, mergeMap, of } from 'rxjs';
+import { finalReducer } from '../reducers';
 
 // actions
 const saveCarts = createAction('[Cart] saveCarts', props<{ carts: Carts[] }>());
@@ -13,7 +20,6 @@ export const loadCarts = createAction(
 );
 
 // selector
-export const selectCarts = (state: { carts: Carts[] }) => state.carts;
 
 // reducer
 const initialState: Carts[] = [];

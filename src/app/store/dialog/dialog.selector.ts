@@ -1,17 +1,17 @@
 import { createSelector } from '@ngrx/store';
-import { Dialog } from './dialog.model';
+import { finalReducer } from '../reducers';
 
-const selectDialog = (state: { dialog: Dialog }) => state.dialog;
+const selectDialog = finalReducer.selectDialogReducer;
 
 export const selectDialogVistable = createSelector(
   selectDialog,
-  (state: Dialog) => state.visable,
+  (state) => state.visable,
 );
 export const selectDialogProductInfo = createSelector(
   selectDialog,
-  (state: Dialog) => state.productInfo,
+  (state) => state.productInfo,
 );
 export const selectSpecificCategory = createSelector(
   selectDialog,
-  (state: Dialog) => state.specificCategory,
+  (state) => state.specificCategory,
 );

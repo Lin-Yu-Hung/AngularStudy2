@@ -1,4 +1,4 @@
-import { createReducer, on } from '@ngrx/store';
+import { createFeature, createReducer, on } from '@ngrx/store';
 import { productActions } from './product.action';
 import { ProductInfo } from '../../product/product.model';
 
@@ -8,7 +8,7 @@ const initialState: ProductInfo = {
   error: false,
 };
 const { saveProducts, loadProductsFailure, saveCategorys } = productActions;
-export const ProductReducer = createReducer(
+const reducer = createReducer(
   // api回傳後修改products
   initialState,
   on(saveProducts, (state, action) => {
@@ -21,3 +21,8 @@ export const ProductReducer = createReducer(
     return { ...state, categorys: action.categorys };
   }),
 );
+
+export const ProductReducer = createFeature({
+  name: 'productInfo',
+  reducer,
+});

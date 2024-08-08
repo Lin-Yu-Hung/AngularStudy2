@@ -1,4 +1,4 @@
-import { createReducer, on } from '@ngrx/store';
+import { createFeature, createReducer, on } from '@ngrx/store';
 import { DialogActions } from './dialog.action';
 import { Dialog } from './dialog.model';
 
@@ -9,7 +9,7 @@ const initState: Dialog = {
 };
 
 const { setVisable, saveSpecificCategory } = DialogActions;
-export const DialogReducer = createReducer(
+const reducer = createReducer(
   initState,
   on(setVisable, (state, action) => {
     return {
@@ -24,3 +24,7 @@ export const DialogReducer = createReducer(
     };
   }),
 );
+export const DialogReducer = createFeature({
+  name: 'DialogReducer',
+  reducer,
+});

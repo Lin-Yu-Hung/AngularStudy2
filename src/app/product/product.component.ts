@@ -10,13 +10,17 @@ import {
   takeUntil,
 } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { inputText } from '../store/search/search.selector';
+import { selectorSearchText } from '../store/search/search.selector';
 import { AsyncPipe, NgIf } from '@angular/common';
-import { selectProductInfo } from '../store/products/product.selector';
+import {
+  selectProductInfo,
+  selectProducts,
+  selectProductFailure,
+} from '../store/products/product.selector';
 import { updateSearchText } from '../store/search/search.action';
 import { ButtonModule } from 'primeng/button';
 import { DialogComponent } from '../dialog/dialog.component';
-import { Products } from './product.model';
+import { Product, Products } from './product.model';
 import { DialogActions } from '../store/dialog/dialog.action';
 import { selectDialogVistable } from '../store/dialog/dialog.selector';
 import { productActions } from '../store/products/product.action';
@@ -62,13 +66,13 @@ export class ProductComponent implements OnInit, OnDestroy {
     );
   }
   ngOnInit() {
-    merge(
-      this.http.get('products'),
-      this.http.get('products'),
-      this.http.get('products'),
-    ).subscribe((data) => {
-      console.log(data);
-    });
+    // merge(
+    //   this.http.get('products'),
+    //   this.http.get('products'),
+    //   this.http.get('products'),
+    // ).subscribe((data) => {
+    //   console.log(data);
+    // });
     this.store.dispatch(this.action);
     const { loadCategorys, loadProducts } = productActions;
     this.visable$ = this.store.select(selectDialogVistable);
@@ -76,17 +80,18 @@ export class ProductComponent implements OnInit, OnDestroy {
     this.store.dispatch(loadCategorys({ url: 'products/categories' }));
 
     this.filteredProducts$ = combineLatest([
-      this.store.select(selectProductInfo),
-      this.store.select(inputText),
+      this.store.select(selectProducts),
+      this.store.select(selectProductFailure),
+      this.store.select(selectorSearchText),
     ]).pipe(
       takeUntil(this.destroy$),
-      map(([productInfo, searchText]) => {
-        if (!productInfo.error) {
-          return productInfo.products.filter((product) =>
+      map(([products, error, searchText]) => {
+        if (!error) {
+          return products.filter((product: Product) =>
             product.title.toLowerCase().includes(searchText.toLowerCase()),
           );
         } else {
-          return productInfo.products;
+          return products;
         }
       }),
     );

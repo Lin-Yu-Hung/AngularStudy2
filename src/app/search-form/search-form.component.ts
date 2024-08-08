@@ -6,11 +6,10 @@ import { InputTextModule } from 'primeng/inputtext';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { SearchService } from './search.service';
 import { Store } from '@ngrx/store';
 import { updateSearchText } from '../store/search/search.action';
 import { Observable } from 'rxjs';
-import { inputText } from '../store/search/search.selector';
+import { selectorSearchText } from '../store/search/search.selector';
 
 @Component({
   selector: 'app-search-form',
@@ -33,7 +32,7 @@ export class SearchFormComponent implements OnInit {
   msg$?: Observable<string>;
   private store = inject(Store);
   ngOnInit(): void {
-    this.msg$ = this.store.select(inputText);
+    this.msg$ = this.store.select(selectorSearchText);
     this.msg$.subscribe((val) => {
       console.log(val);
       this.msg = val;

@@ -1,10 +1,7 @@
 import { createSelector } from '@ngrx/store';
 import { ProductFromState } from './form.reducer';
+import { finalReducer } from '../reducers';
 
-const selectForm = (state: { productForm: ProductFromState }) =>
-  state.productForm;
+const selectProductForm = finalReducer.selectProductForm;
 
-export const selectFromState = createSelector(
-  selectForm,
-  (state) => state.formState,
-);
+export const selectForm = createSelector(selectProductForm, (s) => s.formState);

@@ -1,1 +1,6 @@
-export const inputText = (state: { searchText: string }) => state.searchText;
+import { createSelector } from '@ngrx/store';
+import { finalReducer } from '../reducers';
+
+const selectSearch = finalReducer.selectSearchText;
+
+export const selectorSearchText = createSelector(selectSearch, (s) => s);

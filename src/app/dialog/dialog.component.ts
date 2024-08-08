@@ -19,7 +19,7 @@ import {
   selectDialogVistable,
   selectSpecificCategory,
 } from '../store/dialog/dialog.selector';
-import { selectFromState } from '../store/form/form.selector';
+import { selectForm } from '../store/form/form.selector';
 import { Store } from '@ngrx/store';
 import { Product, Products } from '../product/product.model';
 import { AsyncPipe, NgIf } from '@angular/common';
@@ -145,7 +145,7 @@ export class DialogComponent implements OnInit, OnDestroy {
     );
   }
   ngOnInit(): void {
-    this.formState$ = this.store.select(selectFromState);
+    this.formState$ = this.store.select(selectForm);
     this.visable$ = this.store.select(selectDialogVistable);
     this.specificCategory$ = this.store.select(selectSpecificCategory);
     this.store

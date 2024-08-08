@@ -1,18 +1,21 @@
 import { createSelector } from '@ngrx/store';
 import { ProductInfo } from '../../product/product.model';
+import { finalReducer } from '../reducers';
 
-export const selectProductInfo = (state: { productsInfo: ProductInfo }) =>
-  state.productsInfo;
+const selectProductsInfo = finalReducer.selectProductInfo;
 
-export const selectProducts = createSelector(
-  selectProductInfo,
-  (state) => state.products,
+export const selectProductInfo = createSelector(
+  selectProductsInfo,
+  (state) => state,
 );
+export const selectProducts = createSelector(selectProductsInfo, (state) => {
+  return state.products;
+});
 export const selectProductFailure = createSelector(
-  selectProductInfo,
+  selectProductsInfo,
   (state) => state.error,
 );
 export const selectCategorys = createSelector(
-  selectProductInfo,
+  selectProductsInfo,
   (state) => state.categorys,
 );

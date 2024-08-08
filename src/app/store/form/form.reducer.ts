@@ -1,4 +1,4 @@
-import { createReducer, on } from '@ngrx/store';
+import { createFeature, createReducer, on } from '@ngrx/store';
 import { Products } from '../../product/product.model';
 import {
   createFormGroupState,
@@ -31,13 +31,7 @@ const initForm = createFormGroupState<Products>('ProductForm', {
   image: '',
   rating: { rate: '', count: 0 },
 });
-const priceLessThanCount = (
-  state: FormGroupState<Products>,
-): ValidationErrors => {
-  const price = state.controls.price.value;
-  const count = state.controls.rating.value.count;
-  return price > count ? { priceTooHigh: true } : {};
-};
+
 const validText = (num: number, text: string) => {
   if (text.length > num) {
     return { textToohigh: true };
@@ -53,12 +47,14 @@ const validateForm = updateGroup<Products>({
     });
     return updatedState;
   },
-  price: (inputState, parentState) => {
-    let updatedState: FormControlState<number>;
-    updatedState = validate(inputState, (inputValue) => {
-      return { ...required(inputValue), ...priceLessThanCount(parentState) };
+  price: (controlState, parentState) => {
+    const priceLessThanCount = (value: number): ValidationErrors => {
+      const count = parentState.controls.rating.value.count;
+      return value > count ? { priceTooHigh: true } : {};
+    };
+    return validate(controlState, (value: number) => {
+      return { ...required(value), ...priceLessThanCount(value) };
     });
-    return updatedState;
   },
   category: (state) => ({ ...state, ...validate(required) }),
   description: validate(required),
@@ -95,28 +91,12 @@ const ProductInfoReducer = createReducer(
         },
       }),
     };
-    console.log('🚀 ~ on ~ updateState:', updateState);
-
     return updateState;
-    // updateState = {
-    //   ...state,
-    //   formState: updateRecursive((control) => {
-    //     if (control.id === 'ProductForm.id') {
-    //       return setUserDefinedProperty(control, 'disabled', false);
-    //     }
-    //     return control;
-    //   })(state.formState),
-    // };
-
-    // return updateState;
   }),
 );
 
 // 創建最終的 reducer
-export const ProductInfoFormReducer = (
-  state = initFormState,
-  action: Action,
-) => {
+export const reducer = (state = initFormState, action: Action) => {
   const productInfoState = ProductInfoReducer(state, action);
   const formState = validateForm(
     formGroupReducer(productInfoState.formState, action),
@@ -125,3 +105,8 @@ export const ProductInfoFormReducer = (
 
   return { formState };
 };
+
+export const formReducer = createFeature({
+  name: 'productForm',
+  reducer,
+});
